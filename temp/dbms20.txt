@@ -1,0 +1,146 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Chit No: 20 SPPU\
+DBMS LAB\
+DBMS LAB\
+Create ER diagram for College Database with following entity sets \{Student, Course, Professor) and Record their relationship with each other including mapping cardinality and constraints and create the table for above schema.\
+\
+\
+To create an ER (Entity-Relationship) diagram for a college database, we will define the entities and their relationships based on the given information. The entities mentioned are **Student**, **Course**, and **Professor**. Here's how we can define the schema and relationships:\
+\
+### Entities and Attributes:\
+1. **Student**:\
+   - Attributes: `StudentID` (Primary Key), `FirstName`, `LastName`, `DOB`, `Email`, `Phone`\
+   \
+2. **Course**:\
+   - Attributes: `CourseID` (Primary Key), `CourseName`, `Credits`, `Department`\
+   \
+3. **Professor**:\
+   - Attributes: `ProfessorID` (Primary Key), `FirstName`, `LastName`, `Email`, `Phone`, `Department`\
+\
+### Relationships and Cardinality:\
+\
+1. **Student-Course Relationship (Enrollment)**:\
+   - A **Student** can enroll in many **Courses** and a **Course** can have many **Students**.\
+   - **Cardinality**: Many-to-Many (M:N)\
+   - **Attributes**: `Grade` (The grade obtained by the student in the course).\
+   \
+   - We need a junction table called `Enrollment`:\
+     - Attributes: `StudentID`, `CourseID`, `Grade`\
+     - Foreign Keys: `StudentID` (from Student), `CourseID` (from Course)\
+     \
+2. **Professor-Course Relationship (Teaching)**:\
+   - A **Professor** can teach many **Courses**, but each **Course** is taught by one **Professor**.\
+   - **Cardinality**: One-to-Many (1:N)\
+   - **Attributes**: None (Just a relationship)\
+\
+### ER Diagram Overview:\
+\
+- **Student** is connected to **Course** through **Enrollment** (Many-to-Many).\
+- **Professor** is connected to **Course** through **Teaching** (One-to-Many).\
+\
+### ER Diagram\
+\
+The ER diagram would look like this:\
+\
+```\
++----------------+   +----------------+   +----------------+\
+|   Professor    |   |   Enrollment   |   |     Course     |\
+|----------------|   |----------------|   |----------------|\
+| ProfessorID (PK)|---| StudentID (FK) |---| CourseID (PK)  |\
+| FirstName      |   | CourseID (FK)  |   | CourseName     |\
+| LastName       |   | Grade          |   | Credits        |\
+| Email          |   +----------------+   | Department     |\
+| Phone          |                       +----------------+\
+| Department     |\
++----------------+\
+\
+           |\
+           |\
+           |\
+       +----------------+\
+       |    Student     |\
+       |----------------|\
+       | StudentID (PK) |\
+       | FirstName      |\
+       | LastName       |\
+       | DOB            |\
+       | Email          |\
+       | Phone          |\
+       +----------------+\
+```\
+\
+### Relational Schema (Table Structure)\
+\
+Based on the ER diagram, here are the tables:\
+\
+#### 1. `Student`\
+```sql\
+CREATE TABLE Student (\
+    StudentID INT PRIMARY KEY,\
+    FirstName VARCHAR(50),\
+    LastName VARCHAR(50),\
+    DOB DATE,\
+    Email VARCHAR(100),\
+    Phone VARCHAR(15)\
+);\
+```\
+\
+#### 2. `Course`\
+```sql\
+CREATE TABLE Course (\
+    CourseID INT PRIMARY KEY,\
+    CourseName VARCHAR(100),\
+    Credits INT,\
+    Department VARCHAR(50)\
+);\
+```\
+\
+#### 3. `Professor`\
+```sql\
+CREATE TABLE Professor (\
+    ProfessorID INT PRIMARY KEY,\
+    FirstName VARCHAR(50),\
+    LastName VARCHAR(50),\
+    Email VARCHAR(100),\
+    Phone VARCHAR(15),\
+    Department VARCHAR(50)\
+);\
+```\
+\
+#### 4. `Enrollment` (junction table for Student-Course relationship)\
+```sql\
+CREATE TABLE Enrollment (\
+    StudentID INT,\
+    CourseID INT,\
+    Grade VARCHAR(5),\
+    PRIMARY KEY (StudentID, CourseID),\
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),\
+    FOREIGN KEY (CourseID) REFERENCES Course(CourseID)\
+);\
+```\
+\
+#### 5. `Teaching` (for Professor-Course relationship)\
+```sql\
+CREATE TABLE Teaching (\
+    ProfessorID INT,\
+    CourseID INT,\
+    PRIMARY KEY (ProfessorID, CourseID),\
+    FOREIGN KEY (ProfessorID) REFERENCES Professor(ProfessorID),\
+    FOREIGN KEY (CourseID) REFERENCES Course(CourseID)\
+);\
+```\
+\
+### Constraints:\
+\
+1. **Primary Key Constraints**: Each table has a primary key (e.g., `StudentID`, `CourseID`, `ProfessorID`).\
+2. **Foreign Key Constraints**: These enforce the relationships between tables, e.g., `StudentID` in the `Enrollment` table references `StudentID` in the `Student` table.\
+3. **Many-to-Many Relationship (Student-Course)**: The `Enrollment` table serves as the junction table to handle the many-to-many relationship between `Student` and `Course`.\
+4. **One-to-Many Relationship (Professor-Course)**: The `Teaching` table defines the relationship where each course is taught by one professor, but a professor can teach multiple courses.\
+\
+This schema and diagram model a basic college database, and the relationships and constraints ensure data integrity and enforce appropriate associations between students, courses, and professors.}

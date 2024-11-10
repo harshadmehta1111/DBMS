@@ -1,0 +1,97 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Chit No: 6 SPPU DBMS LAB\
+employee (employee-name, street, city), works (employee-name, company-name, salary), company (company- name, city), manages (employee-name, manager-name)\
+1. Create above tables and insert 5 rows in each table.\
+2. List employees from \'91First Bank Corporation\'92 that earn salary more than all employees of \'91Small Bank Corporation\'92.\
+3. Create a view that will display employee details along with name of his/her manager.\
+4. Display employee details that live in cities Pune, Mumbai, and Nasik.\
+5. Give employees of \'91First Bank Corporation\'92 15% rise if salary is less than 20000.\
+\
+ create database dbms2;\
+ use dbms2;\
+\
+drop database dbms2;\
+-- Create the tables\
+CREATE TABLE employee (\
+    employee_name VARCHAR(50),\
+    street VARCHAR(100),\
+    city VARCHAR(50)\
+);\
+\
+CREATE TABLE works (\
+    employee_name VARCHAR(50),\
+    company_name VARCHAR(50),\
+    salary INT\
+);\
+\
+CREATE TABLE company (\
+    company_name VARCHAR(50),\
+    city VARCHAR(50)\
+);\
+\
+CREATE TABLE manages (\
+    employee_name VARCHAR(50),\
+    manager_name VARCHAR(50)\
+);\
+\
+-- Insert rows into `employee` table\
+INSERT INTO employee VALUES ('Alice', 'Park St', 'Mumbai');\
+INSERT INTO employee VALUES ('Bob', 'MG Road', 'Pune');\
+INSERT INTO employee VALUES ('Charlie', 'Baker St', 'Nasik');\
+INSERT INTO employee VALUES ('David', 'Link Rd', 'Mumbai');\
+INSERT INTO employee VALUES ('Eva', 'Hill Rd', 'Pune');\
+\
+-- Insert rows into `works` table\
+INSERT INTO works VALUES ('Alice', 'First Bank Corporation', 25000);\
+INSERT INTO works VALUES ('Bob', 'Small Bank Corporation', 15000);\
+INSERT INTO works VALUES ('Charlie', 'First Bank Corporation', 18000);\
+INSERT INTO works VALUES ('David', 'Big Bank Corporation', 30000);\
+INSERT INTO works VALUES ('Eva', 'First Bank Corporation', 22000);\
+\
+-- Insert rows into `company` table\
+INSERT INTO company VALUES ('First Bank Corporation', 'Mumbai');\
+INSERT INTO company VALUES ('Small Bank Corporation', 'Pune');\
+INSERT INTO company VALUES ('Big Bank Corporation', 'Nasik');\
+INSERT INTO company VALUES ('Global Corp', 'Mumbai');\
+INSERT INTO company VALUES ('Tech Solutions', 'Pune');\
+\
+-- Insert rows into `manages` table\
+INSERT INTO manages VALUES ('Alice', 'Charlie');\
+INSERT INTO manages VALUES ('Bob', 'David');\
+INSERT INTO manages VALUES ('Charlie', 'Eva');\
+INSERT INTO manages VALUES ('David', 'Eva');\
+INSERT INTO manages VALUES ('Eva', 'Charlie');\
+\
+-- Query 2: List employees from \'91First Bank Corporation\'92 that earn more than all employees of \'91Small Bank Corporation\'92\
+SELECT employee_name\
+FROM works\
+WHERE company_name = 'First Bank Corporation'\
+  AND salary > ALL (SELECT salary\
+                    FROM works\
+                    WHERE company_name = 'Small Bank Corporation');\
+\
+-- Query 3: Create a view to display employee details along with manager name\
+CREATE VIEW employee_manager_view AS\
+SELECT e.employee_name, e.street, e.city, m.manager_name\
+FROM employee e\
+JOIN manages m ON e.employee_name = m.employee_name;\
+\
+-- Query 4: Display employee details who live in Pune, Mumbai, and Nasik\
+SELECT * \
+FROM employee\
+WHERE city IN ('Pune', 'Mumbai', 'Nasik');\
+\
+-- Query 5: Give employees of \'91First Bank Corporation\'92 a 15% raise if salary is less than 20000\
+UPDATE works\
+SET salary = salary * 1.15\
+WHERE company_name = 'First Bank Corporation' AND salary < 20000;\
+\
+-- Display updated works table\
+SELECT * FROM works;\
+}

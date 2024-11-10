@@ -1,0 +1,57 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+Chit No: 13 SPPU DBMS LAB\
+Create a collection Student in MongoDB (stud_id, stud_name, dept_name, marks)\
+1. Insert few documents in collection.\
+2. Find students having marks greater than 50.\
+3. Find students having marks between 50 and 80.\
+4. Find students having marks more than 60 from \'91Computer\'92 department.\
+5. Update marks of all students from \'91Civil\'92 department. Set marks to 30. (Use update ())\
+6. Delete students from \'91Chemical\'92 department having marks less than 30\
+\
+\
+// Switch to your database\
+use yourDatabaseName  \
+\
+// Create the Student collection\
+db.createCollection("Student") \
+\
+// Insert sample documents into the collection\
+db.Student.insertMany([\
+    \{ stud_id: 1, stud_name: "Alice", dept_name: "Computer", marks: 75 \},\
+    \{ stud_id: 2, stud_name: "Bob", dept_name: "Mechanical", marks: 45 \},\
+    \{ stud_id: 3, stud_name: "Charlie", dept_name: "Civil", marks: 55 \},\
+    \{ stud_id: 4, stud_name: "David", dept_name: "Computer", marks: 82 \},\
+    \{ stud_id: 5, stud_name: "Eva", dept_name: "Chemical", marks: 28 \},\
+    \{ stud_id: 6, stud_name: "Frank", dept_name: "Civil", marks: 60 \},\
+    \{ stud_id: 7, stud_name: "Grace", dept_name: "Chemical", marks: 33 \}\
+]);\
+\
+// 2. Find students with marks greater than 50\
+print("Students with marks greater than 50:");\
+db.Student.find(\{ marks: \{ $gt: 50 \} \}).forEach(printjson);\
+\
+// 3. Find students with marks between 50 and 80\
+print("\\nStudents with marks between 50 and 80:");\
+db.Student.find(\{ marks: \{ $gte: 50, $lte: 80 \} \}).forEach(printjson);\
+\
+// 4. Find students with marks more than 60 from 'Computer' department\
+print("\\nStudents with marks greater than 60 in 'Computer' department:");\
+db.Student.find(\{ dept_name: "Computer", marks: \{ $gt: 60 \} \}).forEach(printjson);\
+\
+// 5. Update marks of all students from 'Civil' department to 30\
+db.Student.updateMany(\
+    \{ dept_name: "Civil" \},\
+    \{ $set: \{ marks: 30 \} \}\
+);\
+print("\\nMarks of all students from 'Civil' department updated to 30.");\
+\
+// 6. Delete students from 'Chemical' department with marks less than 30\
+db.Student.deleteMany(\{ dept_name: "Chemical", marks: \{ $lt: 30 \} \});\
+print("\\nDeleted students from 'Chemical' department with marks less than 30.");}

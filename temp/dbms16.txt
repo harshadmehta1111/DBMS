@@ -1,0 +1,77 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Chit No: 16 SPPU DBMS LAB\
+Create a collection Book in MongoDB (Title, Description, Author, Publisher, URL, no_of_likes)\
+1. Add documents in collection.\
+2. Display all documents in collection.\
+3. Display a list stating how many books are published by each Publisher.\
+4. Gets the minimum of no_of_likes from all documents in the collection for each Author.\
+5. Gets the maximum of no_of_likes from all documents in the collection for each Author.\
+\
+\
+// Use the 'library' database (or create it if it doesn't exist)\
+use library;\
+\
+// 1. Create the 'Book' collection and add documents to it\
+db.Book.insertMany([\
+    \{\
+        "Title": "Book One",\
+        "Description": "A book about MongoDB basics.",\
+        "Author": "Author A",\
+        "Publisher": "Publisher X",\
+        "URL": "http://bookone.com",\
+        "no_of_likes": 120\
+    \},\
+    \{\
+        "Title": "Book Two",\
+        "Description": "An advanced book on MongoDB.",\
+        "Author": "Author B",\
+        "Publisher": "Publisher Y",\
+        "URL": "http://booktwo.com",\
+        "no_of_likes": 80\
+    \},\
+    \{\
+        "Title": "Book Three",\
+        "Description": "A book on data processing with MongoDB.",\
+        "Author": "Author A",\
+        "Publisher": "Publisher X",\
+        "URL": "http://bookthree.com",\
+        "no_of_likes": 45\
+    \},\
+    \{\
+        "Title": "Book Four",\
+        "Description": "A guide to MongoDB for beginners.",\
+        "Author": "Author C",\
+        "Publisher": "Publisher Y",\
+        "URL": "http://bookfour.com",\
+        "no_of_likes": 150\
+    \}\
+]);\
+\
+// 2. Display all documents in the 'Book' collection\
+print("All Books in the Collection:");\
+db.Book.find().forEach(book => printjson(book));\
+\
+// 3. Display a list showing the number of books published by each Publisher\
+print("\\nNumber of Books Published by Each Publisher:");\
+db.Book.aggregate([\
+    \{ $group: \{ _id: "$Publisher", count: \{ $sum: 1 \} \} \}\
+]).forEach(publisher => printjson(publisher));\
+\
+// 4. Get the minimum 'no_of_likes' from all documents in the collection for each Author\
+print("\\nMinimum Number of Likes by Each Author:");\
+db.Book.aggregate([\
+    \{ $group: \{ _id: "$Author", min_likes: \{ $min: "$no_of_likes" \} \} \}\
+]).forEach(author => printjson(author));\
+\
+// 5. Get the maximum 'no_of_likes' from all documents in the collection for each Author\
+print("\\nMaximum Number of Likes by Each Author:");\
+db.Book.aggregate([\
+    \{ $group: \{ _id: "$Author", max_likes: \{ $max: "$no_of_likes" \} \} \}\
+]).forEach(author => printjson(author));\
+}

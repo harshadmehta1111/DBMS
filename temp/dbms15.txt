@@ -1,0 +1,78 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Chit No: 15 SPPU DBMS LAB\
+Create a collection Book in MongoDB (Title, Description, Author, Publisher, URL, no_of_likes)\
+1. Add documents in collection.\
+2. Display all documents in collection.\
+3. Display a list stating how many books are written by each author.\
+4. Calculate the sum of no_of_likes from all documents in the collection for each Author.\
+5. Calculates the average of no_of_likes from all documents in the collection for each Author.\
+\
+\
+\
+\
+use yourDatabaseName;\
+\
+// Insert multiple documents into the Book collection\
+db.Book.insertMany([\
+    \{\
+        Title: "MongoDB Basics",\
+        Description: "An introductory book on MongoDB.",\
+        Author: "John Doe",\
+        Publisher: "Tech Press",\
+        no_of_likes: 120\
+    \},\
+    \{\
+        Title: "Advanced MongoDB",\
+        Description: "Advanced techniques in MongoDB.",\
+        Author: "Jane Smith",\
+        Publisher: "Code House",\
+        no_of_likes: 85\
+    \},\
+    \{\
+        Title: "Node.js Essentials",\
+        Description: "Getting started with Node.js.",\
+        Author: "John Doe",\
+        Publisher: "Dev Books",\
+        no_of_likes: 95\
+    \},\
+    \{\
+        Title: "MongoDB and Node.js",\
+        Description: "Combining MongoDB and Node.js for web development.",\
+        Author: "Jane Smith",\
+        Publisher: "Tech Press",\
+        no_of_likes: 150\
+    \},\
+    \{\
+        Title: "JavaScript Fundamentals",\
+        Description: "Fundamentals of JavaScript programming.",\
+        Author: "John Doe",\
+        Publisher: "JS Books",\
+        no_of_likes: 200\
+    \}\
+]);\
+\
+// Display all documents in the collection\
+db.Book.find().pretty();\
+\
+// Count of books by each author\
+db.Book.aggregate([\
+    \{ $group: \{ _id: "$Author", books_count: \{ $sum: 1 \} \} \}\
+]);\
+\
+// Sum of no_of_likes by each author\
+db.Book.aggregate([\
+    \{ $group: \{ _id: "$Author", total_likes: \{ $sum: "$no_of_likes" \} \} \}\
+]);\
+\
+// Average of no_of_likes by each author\
+db.Book.aggregate([\
+    \{ $group: \{ _id: "$Author", average_likes: \{ $avg: "$no_of_likes" \} \} \}\
+]);\
+\
+}

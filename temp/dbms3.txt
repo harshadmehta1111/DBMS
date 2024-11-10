@@ -1,0 +1,61 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0  create database dbms2;\
+ use dbms2;\
+drop database dbms2;\
+-- Step 1: Create tables with primary and foreign key constraints\
+CREATE TABLE Dept (\
+    deptId INT PRIMARY KEY,\
+    deptName VARCHAR(10)\
+);\
+\
+CREATE TABLE Emp (\
+    empId INT PRIMARY KEY,\
+    empName VARCHAR(10) NOT NULL,\
+    empSal INT,\
+    empDeptId INT,\
+    FOREIGN KEY (empDeptId) REFERENCES Dept(deptId)\
+);\
+\
+-- Step 2: Insert records into Dept and Emp\
+INSERT INTO Dept (deptId, deptName) VALUES \
+(1, 'HR'),\
+(2, 'Finance'),\
+(3, 'IT');\
+\
+INSERT INTO Emp (empId, empName, empSal, empDeptId) VALUES \
+(101, 'Alice', 50000, 1),\
+(102, 'Bob', 60000, 2),\
+(103, 'Charlie', 70000, 3);\
+\
+-- Step 3: Add deptLoc column with UNIQUE constraint to Dept table\
+ALTER TABLE Dept\
+ADD deptLoc VARCHAR(10);\
+\
+ALTER TABLE Dept\
+ADD CONSTRAINT unique_deptLoc UNIQUE (deptLoc);\
+\
+-- Step 4: Update deptLoc with unique values\
+UPDATE Dept\
+SET deptLoc = 'New York'\
+WHERE deptId = 1;\
+\
+UPDATE Dept\
+SET deptLoc = 'London'\
+WHERE deptId = 2;\
+\
+UPDATE Dept\
+SET deptLoc = 'S'\
+WHERE deptId = 3;\
+\
+-- View all records in the Dept table\
+SELECT * FROM Dept;\
+\
+-- View all records in the Emp table\
+SELECT * FROM Emp;\
+}

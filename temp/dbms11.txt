@@ -1,0 +1,106 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Chit No: 11 SPPU DBMS LAB Database Trigger (After update and After delete)\
+Write a database trigger on borrower (Rollin int, name varchar (30), dateofissue date, nameofbook varchar (30), status char (10)).\
+The System should keep track of the records thatare being updated or deleted. The old value of updated or deleted records should be added in the Library_Audit (Rollin int, name char (10), dateofissue date, nameofbook char (10), status char, ts timestamp)\
+\
+\
+ create database dbms2;\
+ use dbms2;\
+\
+drop database dbms2;\
+-- 1. Create the `borrower` table\
+CREATE TABLE borrower (\
+    Rollin INT,\
+    name VARCHAR(30),\
+    dateofissue DATE,\
+    nameofbook VARCHAR(30),\
+    status CHAR(10)\
+);\
+\
+-- 2. Create the `Library_Audit` table\
+CREATE TABLE Library_Audit (\
+    Rollin INT,\
+    name CHAR(10),\
+    dateofissue DATE,\
+    nameofbook CHAR(10),\
+    status CHAR(10),\
+    ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP\
+);\
+\
+-- 3. Create the trigger to track updates on `borrower` table\
+DELIMITER //\
+\
+CREATE TRIGGER track_update\
+AFTER UPDATE ON borrower\
+FOR EACH ROW\
+BEGIN\
+    -- Insert the old values into the `Library_Audit` table when an update happens\
+    INSERT INTO Library_Audit (Rollin, name, dateofissue, nameofbook, status, ts)\
+    VALUES (\
+        OLD.Rollin,          -- old value of Rollin\
+        OLD.name,            -- old value of name\
+        OLD.dateofissue,     -- old value of dateofissue\
+        OLD.nameofbook,      -- old value of nameofbook\
+        OLD.status,          -- old value of status\
+        CURRENT_TIMESTAMP    -- timestamp when the update happened\
+    );\
+END //\
+\
+DELIMITER ;\
+\
+-- 4. Create the trigger to track deletions on `borrower` table\
+DELIMITER //\
+\
+CREATE TRIGGER track_delete\
+AFTER DELETE ON borrower\
+FOR EACH ROW\
+BEGIN\
+    -- Insert the deleted values into the `Library_Audit` table when a delete happens\
+    INSERT INTO Library_Audit (Rollin, name, dateofissue, nameofbook, status, ts)\
+    VALUES (\
+        OLD.Rollin,          -- old value of Rollin (deleted record)\
+        OLD.name,            -- old value of name (deleted record)\
+        OLD.dateofissue,     -- old value of dateofissue (deleted record)\
+        OLD.nameofbook,      -- old value of nameofbook (deleted record)\
+        OLD.status,          -- old value of status (deleted record)\
+        CURRENT_TIMESTAMP    -- timestamp when the delete happened\
+    );\
+END //\
+\
+DELIMITER ;\
+\
+-- 5. Insert sample data into `borrower` table\
+INSERT INTO borrower (Rollin, name, dateofissue, nameofbook, status)\
+VALUES \
+    (101, 'John Doe', '2024-10-01', 'The y', 'Issued'),\
+    (102, 'Jane Smith', '2024-09-15', '1984', 'Issued'),\
+    (103, 'Alice Brown', '2024-10-05', 'To ', 'Issued'),\
+    (104, 'Bob White', '2024-10-10', 'The ', 'Issued');\
+\
+-- 6. Update record in `borrower` table (status of Rollin = 101 to 'R')\
+UPDATE borrower\
+SET status = 'R'\
+WHERE Rollin = 101;\
+\
+-- 7. Delete record from `borrower` table (Rollin = 102)\
+DELETE FROM borrower\
+WHERE Rollin = 102;\
+\
+-- 8. View all records in `borrower` table to see changes\
+SELECT * FROM borrower;\
+\
+-- 9. View the `Library_Audit` table to see the old values (from update and delete)\
+SELECT * FROM Library_Audit;\
+\
+-- 10. Drop (delete) all inserted data from `borrower` table\
+DELETE FROM borrower;\
+\
+-- 11. Drop (delete) all audit data from `Library_Audit` table\
+DELETE FROM Library_Audit;\
+}

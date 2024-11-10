@@ -1,0 +1,87 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Chit No: 10 SPPU DBMS LAB Cursors: Write a PL/SQL block of code using parameterized Cursor\
+that will merge the data available in the newly created table N_RollCall (roll number (10), name varchar (10)) with the data available in the table O_RollCall (roll number (10), name varchar (10)).\
+If the data in the first table already exist in the second table, then that data should be skipped.\
+\
+ create database dbms2;\
+ use dbms2;\
+\
+drop database dbms2;\
+\
+-- Create the N_RollCall table\
+CREATE TABLE N_RollCall (\
+    roll_number INT,        -- Integer type for roll number\
+    name VARCHAR(10)        -- Variable-length string type for name, max 10 characters\
+);\
+\
+-- Create the O_RollCall table\
+CREATE TABLE O_RollCall (\
+    roll_number INT,        -- Integer type for roll number\
+    name VARCHAR(10)        -- Variable-length string type for name, max 10 characters\
+);\
+\
+-- Insert sample data into N_RollCall\
+INSERT INTO N_RollCall (roll_number, name) VALUES (1, 'Alice');\
+INSERT INTO N_RollCall (roll_number, name) VALUES (2, 'Bob');\
+INSERT INTO N_RollCall (roll_number, name) VALUES (3, 'Charlie');\
+\
+-- Insert sample data into O_RollCall\
+INSERT INTO O_RollCall (roll_number, name) VALUES (2, 'Bob');\
+INSERT INTO O_RollCall (roll_number, name) VALUES (4, 'David');\
+\
+-- Define the stored procedure to merge data from N_RollCall to O_RollCall\
+DELIMITER $$\
+\
+CREATE PROCEDURE merge_rollcall_data()\
+BEGIN\
+    -- Declare cursor variables\
+    DECLARE v_roll_number INT;\
+    DECLARE v_name VARCHAR(10);\
+    DECLARE done INT DEFAULT 0;  -- Flag to signal end of cursor loop\
+\
+    -- Declare cursor for N_RollCall\
+    DECLARE cur_n_rollcall CURSOR FOR\
+        SELECT roll_number, name FROM N_RollCall;\
+\
+    -- Declare handler to set the done flag when no more rows are found\
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;\
+\
+    -- Open the cursor\
+    OPEN cur_n_rollcall;\
+\
+    -- Loop through the cursor\
+    read_loop: LOOP\
+        FETCH cur_n_rollcall INTO v_roll_number, v_name;\
+\
+        -- Exit loop if no more rows\
+        IF done THEN\
+            LEAVE read_loop;\
+        END IF;\
+\
+        -- Check if roll_number already exists in O_RollCall\
+        IF NOT EXISTS (SELECT 1 FROM O_RollCall WHERE roll_number = v_roll_number) THEN\
+            -- Insert data into O_RollCall if not already present\
+            INSERT INTO O_RollCall (roll_number, name) VALUES (v_roll_number, v_name);\
+        END IF;\
+    END LOOP;\
+\
+    -- Close the cursor\
+    CLOSE cur_n_rollcall;\
+\
+    -- Output success message\
+    SELECT 'Data merged successfully.' AS message;\
+END $$\
+\
+DELIMITER ;\
+\
+-- Call the procedure to execute the merge\
+CALL merge_rollcall_data();\
+\
+-- Select to check the merged data in O_RollCall\
+SELECT * FROM O_RollCall;}
